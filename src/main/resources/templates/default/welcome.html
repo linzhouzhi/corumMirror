@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title>welcome</title>
+    <style type="text/css">
+
+        .card {
+            background: #fff;
+            display: inline-block;
+            margin: 4em;
+            box-shadow: .5em 0 1.25em #ccc;
+            border-radius: .3em;
+            overflow: hidden;
+            max-width: 20em;
+            padding: 20px;
+        }
+        .card img{
+            display: block;
+        }
+        .right-card{
+            transform:rotate(2deg);
+            -ms-transform:rotate(2deg); /* Internet Explorer */
+            -moz-transform:rotate(2deg); /* Firefox */
+            -webkit-transform:rotate(2deg); /* Safari 和 Chrome */
+            -o-transform:rotate(2deg); /* Opera */
+        }
+
+        .left-card{
+            transform:rotate(9deg);
+            -ms-transform:rotate(9deg); /* Internet Explorer */
+            -moz-transform:rotate(9deg); /* Firefox */
+            -webkit-transform:rotate(9deg); /* Safari 和 Chrome */
+            -o-transform:rotate(9deg); /* Opera */
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="card left-card">
+        <p>run flow chat code</p>
+        <img src="../face-cursor/default.jpg" width="260" />
+    </div>
+    <div class="card right-card" style="min-height: 400px;">
+        <h2>Function</h2>
+        <p>1 edit code for flow chat</p>
+        <p>2 run all flow</p>
+        <p>3 step run flow</p>
+        <p>3 flow able dependent anathout flow</p>
+        <p>4 auto generete user view</p>
+    </div>
+</div>
+
+<script src="../jquery/jquery-2.2.3.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="../face-cursor/jQuery-face-cursor.js"></script>
+<script>
+    $(".card").faceCursor();
+</script>
+</body>
+</html>

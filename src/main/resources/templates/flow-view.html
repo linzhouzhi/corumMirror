@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>flow-code</title>
+    <link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" charset="utf-8" />
+    <link href="../css/common.css" rel="stylesheet" charset="utf-8" />
+    <link href="../css/timeline.css" rel="stylesheet" charset="utf-8" />
+
+    <style>
+        pre{
+            border: 0px;
+            background-color: rgb(254, 255, 250);
+        }
+        #step-list > li > a{
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<div class="clearfix nav-height"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel panel-default" style="background-color: rgb(254, 255, 250)">
+            <div class="panel-body">
+                <div style="width:100%;padding: 10px;">
+                    <textarea class="form-control" rows="4" id="user-input"></textarea>
+                    <br/>
+                    <section class="cd-horizontal-timeline loaded">
+                        <div class="timeline">
+                            <div class="events-wrapper">
+                                <div class="events" style="width: 100%; transform: translateX(0px);">
+                                    <ol id="step-list">
+                                    </ol>
+                                    <span class="filling-line" aria-hidden="true" style="transform: scaleX(0);"></span>
+                                </div> <!-- .events -->
+                            </div> <!-- .events-wrapper -->
+
+                        </div> <!-- .timeline -->
+                    </section>
+                    <br/>
+                    <a  id="user-run-flow" class="btn btn-info" href="javascript:void(0)" data-loading-text="Loading..."  autocomplete="off">submit</a>
+                    <pre id="flow-chart-result" style="width: 100%;z-index:10;min-height: 0px"></pre>
+                </div>
+            </div>
+        </div><!-- .panel -->
+    </div><!-- .row -->
+</div><!-- .container-fluid -->
+
+
+</body>
+<script src="../jquery/jquery-2.2.3.min.js"></script>
+<script src="../jquery-ui/jquery-ui.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="../js/cookie.js"></script>
+<script src="../chart/Chart.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/component.js"></script>
+<script src="../js/welcome.js"></script>
+<script src="../js/flow-chart-logic.js"></script>
+<script src="../js/java-api.js"></script>
+<script src="../js/flow-view.js"></script>
+<script th:inline="JavaScript">
+    /*<![CDATA[*/
+    var tmp = [[${flow_data}]];
+    window.business_group = [[${group}]];
+    window.business_name = [[${business}]];
+    if( isJson(tmp.res) ){
+        var jsonObj = JSON.parse( tmp.res );
+        window.flowData = {"nodeDataArray": jsonObj.nodeDataArray,"linkDataArray":jsonObj.linkDataArray};
+    }
+    $("textarea").autoTextarea({
+        maxHeight:420,
+        minHeight:100,
+    });
+
+    init();
+    /*]]>*/
+</script>
+</html>

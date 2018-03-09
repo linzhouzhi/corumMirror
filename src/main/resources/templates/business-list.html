@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flowchart</title>
+    <meta charset="UTF-8" />
+    <link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" charset="utf-8" />
+    <link href="../css/common.css" rel="stylesheet" charset="utf-8" />
+
+    <style>
+        #business-list{
+            list-style:none;
+            padding-left: 10px;
+        }
+        #business-list > li{
+            margin-top: 7px;
+        }
+        .business-li > a{
+            color: #01a9c9;
+            text-decoration:none;
+        }
+
+        .business-li > a:hover{
+            color: #2cff9d;
+        }
+
+        li.a-active > a{
+            color: #1a9b5c;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container-fluid" style="padding:0px;margin: 0px;">
+    <div style="float: left;width: 150px;min-height: 500px;border-right: 1px solid #f5e5e5;">
+        <ul id="business-list">
+            <li class="business-li" th:each="business : ${businessList}"><a th:href="@{/business-detail(group=${group},name=${business})}"  target="showframe" th:text="${business}"></a></li>
+        </ul>
+    </div>
+
+    <div style="padding-left:150px;width:100%">
+        <iframe src="/welcome" name="showframe" style="width:100%;" scrolling="auto" frameborder="0" />
+    </div>
+</div>
+</body>
+<script src="../jquery/jquery-2.2.3.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("iframe").attr("height", $(window).height() - 100);
+    });
+
+    $(".business-li").click(function(){
+        $(".business-li").each(function () {
+            $( this ).removeClass("a-active");
+        });
+        $( this ).addClass("a-active");
+    });
+
+</script>
+</html>

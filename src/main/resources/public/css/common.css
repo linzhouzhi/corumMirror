@@ -1,0 +1,42 @@
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+
+pre{
+    border-radius: 0px;
+    background-color: rgb(254, 255, 250);
+}
+
+.ui-autocomplete{
+    z-index: 10000;
+}
+
+
+.loading {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: black;
+    opacity: 0.4;
+    z-index: 1000;
+}
+
+.loading .gif {
+    height: 32px;
+    width: 32px;
+    background: url('../image/loading.gif');
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -16px;
+    margin-top: -16px;
+    z-index: 1001;
+}
+
+.flow-title{
+    color:#367ea9;
+}
