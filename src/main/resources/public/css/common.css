@@ -40,3 +40,26 @@ pre{
 .flow-title{
     color:#367ea9;
 }
+
+.palette{
+    border-right: solid 1px #ade6f3;
+}
+
+.palette-title{
+    background-color: #ade6f3;
+    height: 30px;
+    width: 100%;
+    padding-top: 5px;
+    color: #675e5e;
+    cursor: pointer;
+    text-align: center;
+}
+
+#flow-chart-result{
+    width: 100%;
+    margin-top: 15px;
+    cursor: move;
+    z-index:10;
+    position: absolute;
+    overflow-y: auto
+}

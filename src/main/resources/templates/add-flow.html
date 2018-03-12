@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/flow-header" />
-<body onLoad="init()">
+<body>
 <div class="container-fluid" style="padding-left: 0px;padding-right: 0px">
     <div style="float: left;width: 100px">
-      <div id="paletteDiv" style="border-right: solid 1px #f5e5e5; height: 560px"></div>
+      <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteDiv">BASE</div>
+      <div class="palette" id="paletteDiv" style="height: 300px"></div>
+      <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteComponent">API</div>
+      <div id="paletteComponent" class="palette" style="background-color: #d9f4fa; height: 300px"></div>
     </div>
 
     <div style="padding-left:100px;width:100%">
         <div class="flow-top" th:include="common/flow-top ::  flow_tool_top"></div>
       <div id="diagramDiv" style="min-height: 500px;max-height: 1000px"></div>
-        <pre id="flow-chart-result" style="width: 100%;margin-top: 15px;z-index:10;cursor: move;position: absolute;">
-
-        </pre>
+        <pre id="flow-chart-result"></pre>
     </div>
 </div>
 
@@ -26,6 +27,7 @@
         var jsonObj = JSON.parse( tmp.res );
         window.flowData = {"nodeDataArray": jsonObj.nodeDataArray,"linkDataArray":jsonObj.linkDataArray};
     }
+
     $("#delete-flow-chart").remove();
 
     var height = $(window).height() - 120;

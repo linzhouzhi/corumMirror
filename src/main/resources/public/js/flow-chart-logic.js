@@ -188,6 +188,18 @@ $(document).on("click", "#modal-confirm-delete", function () {
     })
 });
 
+$(document).on("click", ".palette-title", function () {
+    var divid = $(this).data("target");
+    $("#" + divid).slideToggle("slow");
+    if( $(this).hasClass("glyphicon-menu-down") ){
+        $(this).removeClass("glyphicon-menu-down");
+        $(this).addClass("glyphicon-menu-up");
+    }else{
+        $(this).removeClass("glyphicon-menu-up");
+        $(this).addClass("glyphicon-menu-down");
+    }
+});
+
 function save_flow(data) {
     data.nodeDataArray = diagram.model.nodeDataArray;
     data.linkDataArray = diagram.model.linkDataArray;
@@ -267,7 +279,25 @@ function search_node(content) {
     }
 }
 
+function selectListener(diagram) {
+    window.select_Port = null;
+    diagram.addDiagramListener("ObjectSingleClicked", function(e) {
+        window.select_Port = e.subject.part;
+    });
+    diagram.addDiagramListener("ObjectContextClicked", function(e) {
+        window.select_Port = e.subject.part;
+    });
 
+    diagram.addDiagramListener("BackgroundSingleClicked", function(e) {
+        window.select_Port = null;
+    });
+    diagram.addDiagramListener("BackgroundDoubleClicked", function(e) {
+        window.select_Port = null;
+    });
+    diagram.addDiagramListener("BackgroundContextClicked", function(e) {
+        window.select_Port = null;
+    });
+}
 function clear(){
     $("#flow-chart-result").empty();
 }

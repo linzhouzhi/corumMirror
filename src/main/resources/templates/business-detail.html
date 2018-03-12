@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/flow-header" />
-<body onLoad="init()">
+<body>
 <div class="container-fluid" style="padding-left: 0px;padding-right: 0px">
     <div class="flow-top" th:include="common/flow-top ::  flow_tool_top"></div>
     <div id="diagramDiv" style="min-height: 500px;max-height: 1000px"></div>
-    <pre id="flow-chart-result" style="width: 100%;margin-top: 15px;cursor: move;z-index:10;position: absolute;"></pre>
+    <pre id="flow-chart-result"></pre>
 
 </div>
 <div id="paletteDiv" class="hidden"></div>
-
+<div id="paletteComponent" class="hidden"></div>
 
 
 <div th:include="common/flow-modal ::  flow_modal"></div>

@@ -2,23 +2,24 @@
  * Created by lzz on 2018/2/19.
  */
 
+$(window).load(function () {
+    init(window.flowData);
+});
 
-function init() {
-    if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
-    var $ = go.GraphObject.make;  // for conciseness in defining templates
+function init(flowData) {
+    var $ = go.GraphObject.make;
 
     diagram =
-        $(go.Diagram, "diagramDiv",  // must name or refer to the DIV HTML element
+        $(go.Diagram, "diagramDiv",
             {
                 initialContentAlignment: go.Spot.Center,
-                allowDrop: true,  // must be true to accept drops from the Palette
-                "LinkDrawn": showLinkLabel,  // this DiagramEvent listener is defined below
+                allowDrop: true,
+                "LinkDrawn": showLinkLabel,
                 "LinkRelinked": showLinkLabel,
-                "animationManager.duration": 800, // slightly longer than default (600ms) animation
-                "undoManager.isEnabled": true  // enable undo redo
+                "animationManager.duration": 800,
+                "undoManager.isEnabled": true
             });
 
-    // when the document is modified, add a "*" to the title and enable the "Save" button
     diagram.addDiagramListener("Modified", function(e) {
         var button = document.getElementById("SaveButton");
         if (button) button.disabled = !diagram.isModified;
@@ -30,17 +31,11 @@ function init() {
         }
     });
 
-    // helper definitions for node templates
 
     function nodeStyle() {
         return [
-            // The Node.location comes from the "loc" property of the node data,
-            // converted by the Point.parse static method.
-            // If the Node.location is changed, it updates the "loc" property of the node data,
-            // converting back using the Point.stringify static method.
             new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
             {
-                // the Node.location is at the center of each node
                 locationSpot: go.Spot.Center,
                 //isShadowed: true,
                 //shadowColor: "#888",
@@ -55,23 +50,46 @@ function init() {
         return $(go.Shape, "Circle",
             {
                 fill: "transparent",
-                stroke: null,  // this is changed to "white" in the showPorts function
+                stroke: null,
                 desiredSize: new go.Size(8, 8),
-                alignment: spot, alignmentFocus: spot,  // align the port on the main Shape
-                portId: name,  // declare this object to be a "port"
-                fromSpot: spot, toSpot: spot,  // declare where links may connect at this port
-                fromLinkable: output, toLinkable: input,  // declare whether the user may draw links to/from here
-                cursor: "pointer"  // show a different cursor to indicate potential link point
+                alignment: spot, alignmentFocus: spot,
+                portId: name,
+                fromSpot: spot, toSpot: spot,
+                fromLinkable: output, toLinkable: input,
+                cursor: "pointer"
             });
     }
 
-    // define the Node templates for regular nodes
-
     var lightText = 'whitesmoke';
 
-    diagram.nodeTemplateMap.add("Code",  // the default category
+    diagram.nodeTemplateMap.add("Component",
         $(go.Node, "Spot", nodeStyle(),
-            // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
+            $(go.Panel, "Auto",
+                $(go.Shape, "Rectangle",
+                    { fill: "#00A9C9", stroke: null },
+                    new go.Binding("figure", "figure")),
+                $(go.TextBlock,
+                    {
+                        font: "bold 10pt Helvetica, Arial, sans-serif",
+                        stroke: lightText,
+                        margin: 8,
+                        width: 70,
+                        textAlign: "center",
+                        maxSize: new go.Size(460, NaN),
+                        wrap: go.TextBlock.None,
+                        editable: true
+                    },
+                    new go.Binding("text").makeTwoWay())
+            ),
+            // four named ports, one on each side:
+            makePort("T", go.Spot.Top, false, true),
+            makePort("L", go.Spot.Left, true, true),
+            makePort("R", go.Spot.Right, true, true),
+            makePort("B", go.Spot.Bottom, true, false)
+        ));
+
+    diagram.nodeTemplateMap.add("Code",
+        $(go.Node, "Spot", nodeStyle(),
             $(go.Panel, "Auto",
                 $(go.Shape, "Rectangle",
                     { fill: "#00A9C9", stroke: null },
@@ -87,7 +105,6 @@ function init() {
                     },
                     new go.Binding("text").makeTwoWay())
             ),
-            // four named ports, one on each side:
             makePort("T", go.Spot.Top, false, true),
             makePort("L", go.Spot.Left, true, true),
             makePort("R", go.Spot.Right, true, true),
@@ -103,7 +120,7 @@ function init() {
                     { font: "bold 8pt Helvetica, Arial, sans-serif", stroke: lightText },
                     new go.Binding("text"))
             ),
-            // three named ports, one on each side except the top, all output only:
+
             makePort("L", go.Spot.Left, true, false),
             makePort("R", go.Spot.Right, true, false),
             makePort("B", go.Spot.Bottom, true, false)
@@ -118,7 +135,6 @@ function init() {
                     { font: "bold 8pt Helvetica, Arial, sans-serif", stroke: lightText },
                     new go.Binding("text"))
             ),
-            // three named ports, one on each side except the bottom, all input only:
             makePort("T", go.Spot.Top, false, true),
             makePort("L", go.Spot.Left, false, true),
             makePort("R", go.Spot.Right, false, true)
@@ -139,13 +155,10 @@ function init() {
                     stroke: '#454545'
                 },
                 new go.Binding("text").makeTwoWay())
-            // no ports, because no links are allowed to connect with a comment
         ));
 
-
-    // replace the default Link template in the linkTemplateMap
     diagram.linkTemplate =
-        $(go.Link,  // the whole link panel
+        $(go.Link,
             {
                 routing: go.Link.AvoidsNodes,
                 curve: go.Link.JumpOver,
@@ -154,23 +167,23 @@ function init() {
                 relinkableTo: true,
                 reshapable: true,
                 resegmentable: true,
-                // mouse-overs subtly highlight links:
+
                 mouseEnter: function(e, link) { link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)"; },
                 mouseLeave: function(e, link) { link.findObject("HIGHLIGHT").stroke = "transparent"; }
             },
             new go.Binding("points").makeTwoWay(),
-            $(go.Shape,  // the highlight shape, normally transparent
+            $(go.Shape,
                 { isPanelMain: true, strokeWidth: 8, stroke: "transparent", name: "HIGHLIGHT" }),
-            $(go.Shape,  // the link path shape
+            $(go.Shape,
                 { isPanelMain: true, stroke: "gray", strokeWidth: 2 }),
-            $(go.Shape,  // the arrowhead
+            $(go.Shape,
                 { toArrow: "standard", stroke: null, fill: "gray"}),
-            $(go.Panel, "Auto",  // the link label, normally not visible
+            $(go.Panel, "Auto",
                 { visible: false, name: "LABEL", segmentIndex: 2, segmentFraction: 0.5},
                 new go.Binding("visible", "visible").makeTwoWay(),
-                $(go.Shape, "RoundedRectangle",  // the label shape
+                $(go.Shape, "RoundedRectangle",
                     { fill: "#F8F8F8", stroke: null }),
-                $(go.TextBlock, "Yes",  // the label
+                $(go.TextBlock, "Yes",
                     {
                         textAlign: "center",
                         font: "10pt helvetica, arial, sans-serif",
@@ -181,26 +194,22 @@ function init() {
             )
         );
 
-    // Make link labels visible if coming out of a "conditional" node.
-    // This listener is called by the "LinkDrawn" and "LinkRelinked" DiagramEvents.
     function showLinkLabel(e) {
         var label = e.subject.findObject("LABEL");
         if (label !== null) label.visible = (e.subject.fromNode.data.figure === "Diamond");
     }
 
-    // temporary links used by LinkingTool and RelinkingTool are also orthogonal:
     diagram.toolManager.linkingTool.temporaryLink.routing = go.Link.Orthogonal;
     diagram.toolManager.relinkingTool.temporaryLink.routing = go.Link.Orthogonal;
 
-    load();  // load an initial diagram from some JSON text加载原有流程
+    load();
 
-    // initialize the Palette that is on the left side of the page
     palette =
-        $(go.Palette, "paletteDiv",  // must name or refer to the DIV HTML element
+        $(go.Palette, "paletteDiv",
             {
-                "animationManager.duration": 800, // slightly longer than default (600ms) animation
-                nodeTemplateMap: diagram.nodeTemplateMap,  // share the templates used by diagram
-                model: new go.GraphLinksModel([  // specify the contents of the Palette
+                "animationManager.duration": 800,
+                nodeTemplateMap: diagram.nodeTemplateMap,
+                model: new go.GraphLinksModel([
                     { category: "Start", text: "Start" },
                     { category: "Code", text: "Step" },
                     { category: "Code", text: "if", figure: "Diamond" },
@@ -208,9 +217,21 @@ function init() {
                     { category: "Comment", text: "Comment" }
                 ])
             });
-
-    // The following code overrides GoJS focus to stop the browser from scrolling
-    // the page when either the Diagram or Palette are clicked or dragged onto.
+    paletteComponent =
+        $(go.Palette, "paletteComponent",
+            {
+                "animationManager.duration": 800,
+                nodeTemplateMap: diagram.nodeTemplateMap,
+                model: new go.GraphLinksModel([
+                    { category: "Component", text: "Redis" },
+                    { category: "Component", text: "Hbase" },
+                    { category: "Component", text: "Kafka" },
+                    { category: "Component", text: "SqlServer" },
+                    { category: "Component", text: "Mysql" },
+                    { category: "Component", text: "Http" },
+                    { category: "Component", text: "Zookeeper" }
+                ])
+            });
 
     function customFocus() {
         var x = window.scrollX || window.pageXOffset;
@@ -221,29 +242,10 @@ function init() {
 
     diagram.doFocus = customFocus;
     palette.doFocus = customFocus;
-
-    window.select_Port = null;
-    diagram.addDiagramListener("ObjectSingleClicked", function(e) {
-        window.select_Port = e.subject.part;
-
-    });
-    diagram.addDiagramListener("ObjectContextClicked", function(e) {
-        window.select_Port = e.subject.part;
-
-    });
-
-    diagram.addDiagramListener("BackgroundSingleClicked", function(e) {
-        window.select_Port = null;
-    });
-    diagram.addDiagramListener("BackgroundDoubleClicked", function(e) {
-        window.select_Port = null;
-    });
-    diagram.addDiagramListener("BackgroundContextClicked", function(e) {
-        window.select_Port = null;
-    });
-
-
-} // end init
+    paletteComponent.doFocus = customFocus;
+    selectListener(diagram);
+    initComponent(diagram);
+}
 
 function getSelect() {
     if( window.select_Port == null ){
@@ -251,7 +253,7 @@ function getSelect() {
     }
     return window.select_Port.Vd.key;
 }
-// Make all ports on a node visible when the mouse is over the node
+
 function showPorts(node, show) {
     var diagram = node.diagram;
     if (!diagram || diagram.isReadOnly || !diagram.allowLink) return;
@@ -261,11 +263,6 @@ function showPorts(node, show) {
 }
 
 
-/*  // Show the diagram's model in JSON format that the user may edit
- function save() {
- document.getElementById("mySavedModel").value = diagram.model.toJson();
- diagram.isModified = false;
- }*/
 function load() {
     var data = { "class": "go.GraphLinksModel",
         "linkFromPortIdProperty": "fromPort",
@@ -273,8 +270,8 @@ function load() {
         "linkDataArray":[],
         "nodeDataArray":[]
         };
-        data.linkDataArray = window.flowData.linkDataArray;
-        data.nodeDataArray = window.flowData.nodeDataArray;
+        data.linkDataArray = flowData.linkDataArray;
+        data.nodeDataArray = flowData.nodeDataArray;
     diagram.model = go.Model.fromJson(data);
 }
 

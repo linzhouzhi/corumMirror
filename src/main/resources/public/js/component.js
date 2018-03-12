@@ -2,6 +2,28 @@
  * Created by lzz on 2018/2/27.
  */
 
+function initComponent(diagram) {
+    diagram.addDiagramListener("ExternalObjectsDropped", function (e) {
+        try {
+            e.subject.each(function(part) {
+                console.log(part);
+                var text = part.Vd.text;
+                if( text == "Redis" ) {
+                    part.Vd.text = "function f1(param){ \n"+
+                    "console.log(param); \n"+
+                    "console.log('f111'); \n"+
+                    "return {'aa':123,'cc':90}; \n"+
+                    "}";
+                    part.Vd.category = "Code";
+                    diagram.rebuildParts();
+                }
+            });
+        }catch (e) {
+            console.log(e);
+        }
+    });
+}
+
 function show_table(data) {
     $("#flow-chart-result").html('<div id="flow-result-table"></div>');
     var table_str = "";
