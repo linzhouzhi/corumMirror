@@ -60,7 +60,122 @@ function init(flowData) {
             });
     }
 
+    // Create an HTMLInfo and dynamically create some HTML to show/hide
+    var customEditor = new go.HTMLInfo();
+    var customSelectBox = document.createElement("select");
+
+    customEditor.show = function(textBlock, diagram, tool) {
+        if (!(textBlock instanceof go.TextBlock)) return;
+
+        // Populate the select box:
+        customSelectBox.innerHTML = "";
+
+        var list = textBlock.choices;
+        if( !list ){
+            return;
+        }
+        for (var i = 0; i < list.length; i++) {
+            var op = document.createElement("option");
+            op.text = list[i];
+            op.value = list[i];
+            customSelectBox.add(op, null);
+        }
+
+        // After the list is populated, set the value:
+        customSelectBox.value = textBlock.text;
+
+        // Do a few different things when a user presses a key
+        customSelectBox.addEventListener("keydown", function(e) {
+            var keynum = e.which;
+            if (keynum == 13) { // Accept on Enter
+                tool.acceptText(go.TextEditingTool.Enter);
+                return;
+            } else if (keynum == 9) { // Accept on Tab
+                tool.acceptText(go.TextEditingTool.Tab);
+                e.preventDefault();
+                return false;
+            } else if (keynum === 27) { // Cancel on Esc
+                tool.doCancel();
+                if (tool.diagram) tool.diagram.focus();
+            }
+        }, false);
+
+        var loc = textBlock.getDocumentPoint(go.Spot.TopLeft);
+        var pos = diagram.transformDocToView(loc);
+        customSelectBox.style.left = pos.x + "px";
+        customSelectBox.style.top  = pos.y + "px";
+        customSelectBox.style.position = 'absolute';
+        customSelectBox.style.zIndex = 100; // place it in front of the Diagram
+
+        diagram.div.appendChild(customSelectBox);
+    }
+
+    customEditor.hide = function(diagram, tool) {
+        diagram.div.removeChild(customSelectBox);
+    }
+
+    customEditor.valueFunction = function() { return customSelectBox.value; }
+    //diagram.toolManager.textEditingTool.defaultTextEditor = customEditor;
+
     var lightText = 'whitesmoke';
+    var constomList = window.customComponents;
+    for(var i = 0; i < constomList.length; i++){
+        diagram.nodeTemplateMap.add("constom-" + constomList[i]["group"],
+            $(go.Node, "Spot", nodeStyle(),
+                $(go.Panel, "Auto",
+                    $(go.Shape, "Rectangle",
+                        { fill: "#00A9C9", stroke: null },
+                        new go.Binding("figure", "figure")),
+                    $(go.TextBlock,
+                        {
+                            font: "bold 10pt Helvetica, Arial, sans-serif",
+                            stroke: lightText,
+                            wrap: go.TextBlock.None,
+                            editable: true,
+                            margin: 8,
+                            textEditor: customEditor,
+                            choices: constomList[i]["items"]
+                        },
+                        new go.Binding("text").makeTwoWay())
+                ),
+                // four named ports, one on each side:
+                makePort("T", go.Spot.Top, false, true),
+                makePort("L", go.Spot.Left, true, true),
+                makePort("R", go.Spot.Right, true, true),
+                makePort("B", go.Spot.Bottom, true, false)
+            ));
+    }
+
+    diagram.nodeTemplateMap.add("RestFul",
+        $(go.Node, "Spot", nodeStyle(),
+            $(go.Panel, "Auto",
+                $(go.Shape, "Rectangle",
+                    { fill: "#00A9C9", stroke: null },
+                    new go.Binding("figure", "figure")),
+                $(go.TextBlock,
+                    {
+                        font: "bold 10pt Helvetica, Arial, sans-serif",
+                        stroke: lightText,
+                        margin: 8,
+                        width: 70,
+                        textAlign: "center",
+                        maxSize: new go.Size(460, NaN),
+                        wrap: go.TextBlock.None,
+                        editable: true
+                    },
+                    new go.Binding("text").makeTwoWay()),
+                    {
+                        click: function(e, node) {
+                            window.open("https://" + node.part.Vd.text);
+                        }
+                    }
+            ),
+            // four named ports, one on each side:
+            makePort("T", go.Spot.Top, false, true),
+            makePort("L", go.Spot.Left, true, true),
+            makePort("R", go.Spot.Right, true, true),
+            makePort("B", go.Spot.Bottom, true, false)
+    ))
 
     diagram.nodeTemplateMap.add("Component",
         $(go.Node, "Spot", nodeStyle(),
@@ -229,8 +344,21 @@ function init(flowData) {
                     { category: "Component", text: "SqlServer" },
                     { category: "Component", text: "Mysql" },
                     { category: "Component", text: "Http" },
-                    { category: "Component", text: "Zookeeper" }
+                    { category: "RestFul", text: "RestFul" }
                 ])
+            });
+
+    var constomPaletteList = [];
+    for(var i = 0; i < constomList.length; i++){
+        var item = { category: "constom-" + constomList[i]["group"], text: constomList[i]["group"] };
+        constomPaletteList.push( item );
+    }
+    paletteUserConstom =
+        $(go.Palette, "paletteUserConstom",
+            {
+                "animationManager.duration": 800,
+                nodeTemplateMap: diagram.nodeTemplateMap,
+                model: new go.GraphLinksModel( constomPaletteList )
             });
 
     function customFocus() {

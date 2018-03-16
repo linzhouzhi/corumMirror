@@ -53,8 +53,11 @@ pre{
     color: #675e5e;
     cursor: pointer;
     text-align: center;
+    border-bottom: 1px solid #fff;
 }
-
+.palette-content{
+    height: 290px;
+}
 #flow-chart-result{
     width: 100%;
     margin-top: 15px;

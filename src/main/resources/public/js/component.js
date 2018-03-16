@@ -14,6 +14,9 @@ function initComponent(diagram) {
                     "console.log('f111'); \n"+
                     "return {'aa':123,'cc':90}; \n"+
                     "}";
+                }
+
+                if( part.Vd.category == "Component"){
                     part.Vd.category = "Code";
                     diagram.rebuildParts();
                 }

@@ -5,9 +5,11 @@
 <div class="container-fluid" style="padding-left: 0px;padding-right: 0px">
     <div style="float: left;width: 100px">
       <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteDiv">BASE</div>
-      <div class="palette" id="paletteDiv" style="height: 300px"></div>
+      <div class="palette palette-content" id="paletteDiv"></div>
       <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteComponent">API</div>
-      <div id="paletteComponent" class="palette" style="background-color: #d9f4fa; height: 300px"></div>
+      <div id="paletteComponent" class="palette palette-content" style="background-color: #d9f4fa;"></div>
+      <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteUserConstom">CONSTOM</div>
+      <div id="paletteUserConstom" class="palette palette-content" style="background-color: #d9f4fa;"></div>
     </div>
 
     <div style="padding-left:100px;width:100%">
@@ -33,6 +35,8 @@
     var height = $(window).height() - 120;
     var style_height = "height:" + height + "px";
     $("#diagramDiv").attr("style", style_height);
+
+    window.customComponents = [{"group":"redis","items":["redis-e4","redis-e11"]},{"group":"hbase","items":["hbase:e4","hbase:e11"]}];
     /*]]>*/
 </script>
 

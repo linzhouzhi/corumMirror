@@ -10,7 +10,7 @@
 </div>
 <div id="paletteDiv" class="hidden"></div>
 <div id="paletteComponent" class="hidden"></div>
-
+<div id="paletteUserConstom" class="hidden"></div>
 
 <div th:include="common/flow-modal ::  flow_modal"></div>
 
@@ -29,6 +29,8 @@
     var height = $(window).height() - 120;
     var style_height = "height:" + height + "px";
     $("#diagramDiv").attr("style", style_height);
+
+    window.customComponents = [];
     /*]]>*/
 </script>
 
