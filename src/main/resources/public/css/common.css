@@ -66,3 +66,12 @@ pre{
     position: absolute;
     overflow-y: auto
 }
+
+#flow-detail-link{
+    font-size:16px;
+    position:relative;
+    top:15px;
+    left:12px;
+    color:#367ea9;
+    cursor: pointer;
+}

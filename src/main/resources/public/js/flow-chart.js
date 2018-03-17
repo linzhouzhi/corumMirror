@@ -118,9 +118,14 @@ function init(flowData) {
     //diagram.toolManager.textEditingTool.defaultTextEditor = customEditor;
 
     var lightText = 'whitesmoke';
-    var constomList = window.customComponents;
-    for(var i = 0; i < constomList.length; i++){
-        diagram.nodeTemplateMap.add("constom-" + constomList[i]["group"],
+    var customMap = window.customComponents;
+    for(var key in customMap){
+        var choiceList = [];
+        for(var i = 0; i < customMap[key].length; i++ ){
+            var item = "#" + key + ":" + customMap[key][i];
+            choiceList.push( item );
+        }
+        diagram.nodeTemplateMap.add("custom-" + key,
             $(go.Node, "Spot", nodeStyle(),
                 $(go.Panel, "Auto",
                     $(go.Shape, "Rectangle",
@@ -134,7 +139,7 @@ function init(flowData) {
                             editable: true,
                             margin: 8,
                             textEditor: customEditor,
-                            choices: constomList[i]["items"]
+                            choices: choiceList
                         },
                         new go.Binding("text").makeTwoWay())
                 ),
@@ -145,37 +150,6 @@ function init(flowData) {
                 makePort("B", go.Spot.Bottom, true, false)
             ));
     }
-
-    diagram.nodeTemplateMap.add("RestFul",
-        $(go.Node, "Spot", nodeStyle(),
-            $(go.Panel, "Auto",
-                $(go.Shape, "Rectangle",
-                    { fill: "#00A9C9", stroke: null },
-                    new go.Binding("figure", "figure")),
-                $(go.TextBlock,
-                    {
-                        font: "bold 10pt Helvetica, Arial, sans-serif",
-                        stroke: lightText,
-                        margin: 8,
-                        width: 70,
-                        textAlign: "center",
-                        maxSize: new go.Size(460, NaN),
-                        wrap: go.TextBlock.None,
-                        editable: true
-                    },
-                    new go.Binding("text").makeTwoWay()),
-                    {
-                        click: function(e, node) {
-                            window.open("https://" + node.part.Vd.text);
-                        }
-                    }
-            ),
-            // four named ports, one on each side:
-            makePort("T", go.Spot.Top, false, true),
-            makePort("L", go.Spot.Left, true, true),
-            makePort("R", go.Spot.Right, true, true),
-            makePort("B", go.Spot.Bottom, true, false)
-    ))
 
     diagram.nodeTemplateMap.add("Component",
         $(go.Node, "Spot", nodeStyle(),
@@ -343,23 +317,39 @@ function init(flowData) {
                     { category: "Component", text: "Kafka" },
                     { category: "Component", text: "SqlServer" },
                     { category: "Component", text: "Mysql" },
-                    { category: "Component", text: "Http" },
-                    { category: "RestFul", text: "RestFul" }
+                    { category: "Component", text: "Http" }
                 ])
             });
 
     var constomPaletteList = [];
-    for(var i = 0; i < constomList.length; i++){
-        var item = { category: "constom-" + constomList[i]["group"], text: constomList[i]["group"] };
+    for(var key in customMap){
+        var item = { category: "custom-" + key, text: key, key: key.substring(0, 10) };
         constomPaletteList.push( item );
     }
-    paletteUserConstom =
-        $(go.Palette, "paletteUserConstom",
+    paletteUserCustom =
+        $(go.Palette, "paletteUserCustom",
             {
                 "animationManager.duration": 800,
-                nodeTemplateMap: diagram.nodeTemplateMap,
                 model: new go.GraphLinksModel( constomPaletteList )
             });
+    paletteUserCustom.nodeTemplate =
+        $(go.Node, "Spot", nodeStyle(),
+            $(go.Panel, "Auto",
+                $(go.Shape, "Rectangle",
+                    { fill: "#00A9C9", stroke: null },
+                    new go.Binding("figure", "figure")),
+                $(go.TextBlock,
+                    {
+                        font: "bold 10pt Helvetica, Arial, sans-serif",
+                        stroke: lightText,
+                        margin: 8,
+                        width: 70,
+                        textAlign: "center",
+                        wrap: go.TextBlock.None
+                    },
+                    new go.Binding("text","key"))
+            )
+        );
 
     function customFocus() {
         var x = window.scrollX || window.pageXOffset;
@@ -371,6 +361,7 @@ function init(flowData) {
     diagram.doFocus = customFocus;
     palette.doFocus = customFocus;
     paletteComponent.doFocus = customFocus;
+    paletteUserCustom.doFocus = customFocus;
     selectListener(diagram);
     initComponent(diagram);
 }

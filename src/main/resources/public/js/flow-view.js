@@ -23,10 +23,11 @@ function init() {
     var codeArr = getCodeArr(window.flowData.nodeDataArray, window.flowData.linkDataArray);
     window.codeArr = codeArr;
     for(var i = 0; i < codeArr.length; i++ ){
-        if( codeArr[i].category != "Code" ){
+        var category = codeArr[i].category;
+        if( category != "Code" ){
             continue;
         }
-        if( componentType(codeArr[i].text) == "json" ){
+        if( componentType(codeArr[i].text) == "json" || componentType(codeArr[i].text) == "string" ){
             $("#user-input").text( codeArr[i].text );
         }
     }
@@ -63,24 +64,17 @@ $(document).on("click", "#user-run-flow", function () {
     $( this ).button('loading');
     clear();
     var codeArr = window.codeArr;
-    window.business_res = "";
+    window.business_res = $("#user-input").val();
+    window.flow_step_index = 0;
     for(var i = 0; i < codeArr.length; i++ ){
-        if( codeArr[i].category != "Code" ){
-            continue;
+        if( i == 0 && window.business_res != ""){ // 第一个为输入
+            codeArr[i].text = window.business_res;
+            codeArr[i].category = "Code";
         }
-        if( componentType(codeArr[i].text) == "json" ||  componentType(codeArr[i].text) == "string"){
-            codeArr[i].text = $("#user-input").val();
-            console.log( codeArr[i].text );
-            window.flow_step_index = 0;
-
-            for(var i = 0; i < codeArr.length; i++ ){
-                window.flow_step_index++;
-                step_run_flow(codeArr, i, window.business_group, window.business_name);
-                if( codeArr[i].key == $("a.selected").data("key") ){
-                    $( this ).button( 'reset' );
-                    return;
-                }
-            }
+        step_run_flow(codeArr, i, window.business_group, window.business_name);
+        if( codeArr[i].key == $("a.selected").data("key") ){
+            $( this ).button( 'reset' );
+            return;
         }
     }
     $("a[data-key='" + codeArr[codeArr.length-1].key + "']").click();

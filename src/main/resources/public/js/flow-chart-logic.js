@@ -5,7 +5,7 @@
 $(document).ready(function () {
     $("[data-toggle='popover']").popover();
     $('[data-toggle="tooltip"]').tooltip();
-    drag("#flow-chart-result");
+    drag(".drag");
     $("[name='modal-flow-group']").autocomplete({
         source: "/flow-list"
     });
@@ -73,7 +73,8 @@ function step_run_flow(codeArr, i, group, flow_name_tag) {
         }
     }
     var codeText = codeArr[i].text;
-    if( codeArr[i].category != "Code" ) {
+    var category = codeArr[i].category;
+    if( category != "Code" && category.indexOf("custom") != 0 ) {
         return;
     }
 
@@ -253,7 +254,11 @@ function getRootKey(nodeDataArray) {
             return rootKey;
         };
     });
-    for(var i = 0; i < nodeDataArray.length; i++){
+    var len = nodeDataArray.length;
+    if( len == 1 ){
+        return nodeDataArray[0].key;
+    }
+    for(var i = 0; i < len; i++){
         if( !nodeDataArray[i].text ){
             break;
         }
@@ -281,11 +286,19 @@ function search_node(content) {
 
 function selectListener(diagram) {
     window.select_Port = null;
+    diagram.addDiagramListener("TextEdited", function(e) {
+        window.select_Port = e.subject.part;
+        set_flow_detail_link();
+
+    });
     diagram.addDiagramListener("ObjectSingleClicked", function(e) {
         window.select_Port = e.subject.part;
+        set_flow_detail_link();
+
     });
     diagram.addDiagramListener("ObjectContextClicked", function(e) {
         window.select_Port = e.subject.part;
+        set_flow_detail_link();
     });
 
     diagram.addDiagramListener("BackgroundSingleClicked", function(e) {
@@ -298,6 +311,39 @@ function selectListener(diagram) {
         window.select_Port = null;
     });
 }
+
+function set_flow_detail_link() {
+    if( window.select_Port == null ){
+        $("#flow-detail-link").empty();
+        return;
+    }
+    var con = window.select_Port.Vd.text;
+    var href = "";
+    if( con.indexOf("#") == 0 ){
+        var tmpArr = con.substring(1).split(":");
+        href = "business-detail?group=" + tmpArr[0]+ "&name=" + tmpArr[1];
+    }else{
+        if( window.select_Port.Vd.category.indexOf("custom") == 0 ){
+            href = "/business-list?group=" + con;
+        }
+    }
+    if( href != "" ){
+        $("#flow-detail-link").data("href", href);
+        $("#flow-detail-link").html( '<span class="glyphicon glyphicon-hand-right"></span> ' + con);
+    }else{
+        $("#flow-detail-link").empty();
+    }
+}
+
+$(function () {
+    $('#flow-chart-link-modal').on('shown.bs.modal', function () {
+        var href = $("#flow-detail-link").data("href");
+        $("#flow-chart-modal-iframe").attr("src", href);
+        console.log(111111);
+    });
+});
+
+
 function clear(){
     $("#flow-chart-result").empty();
 }

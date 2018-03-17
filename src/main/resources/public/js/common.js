@@ -140,8 +140,8 @@ function drag(target) {
             }else if(y>$(document).height()-$(target).outerHeight(true)){
                 y = $(document).height()-$(target).outerHeight(true);
             }
-            if( y < 50 ){
-                y = 50;
+            if( y < 30 ){
+                y = 30;
             }
             $(target).css({
                 'left':x+'px',
@@ -156,47 +156,25 @@ function drag(target) {
 
 
 $.fn.autoTextarea = function(options) {
-
     var defaults={
-
-        maxHeight:null,//文本框是否自动撑高，默认：null，不自动撑高；如果自动撑高必须输入数值，该值作为文本框自动撑高的最大高度
-
-        minHeight:$(this).height() //默认最小高度，也就是文本框最初的高度，当内容高度小于这个高度的时候，文本以这个高度显示
-
+        maxHeight:null,
+        minHeight:$(this).height()
     };
-
     var opts = $.extend({},defaults,options);
-
     return $(this).each(function() {
-
         $(this).bind("paste cut keydown keyup focus blur",function(){
-
             var height,style=this.style;
-
             this.style.height =  opts.minHeight + 'px';
-
             if (this.scrollHeight > opts.minHeight) {
-
                 if (opts.maxHeight && this.scrollHeight > opts.maxHeight) {
-
                     height = opts.maxHeight;
-
                     style.overflowY = 'scroll';
-
                 } else {
-
                     height = this.scrollHeight;
-
                     style.overflowY = 'hidden';
-
                 }
-
                 style.height = height  + 'px';
-
             }
-
         });
-
     });
-
 };

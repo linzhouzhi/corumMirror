@@ -22,7 +22,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="panel panel-default" style="background-color: rgb(254, 255, 250)">
-            <div class="panel-body">
+            <div class="panel-body" style="padding: 10px 0 0 0;">
                 <div style="width:100%;padding: 10px;">
                     <textarea class="form-control" rows="4" id="user-input"></textarea>
                     <br/>
@@ -40,7 +40,7 @@
                     </section>
                     <br/>
                     <a  id="user-run-flow" class="btn btn-info" href="javascript:void(0)" data-loading-text="Loading..."  autocomplete="off">submit</a>
-                    <pre id="flow-chart-result" style="width: 100%;z-index:10;min-height: 0px"></pre>
+                    <pre id="flow-chart-result" style="width: 100%;z-index:10;min-height: 0px;cursor: default"></pre>
                 </div>
             </div>
         </div><!-- .panel -->
@@ -73,6 +73,8 @@
         maxHeight:420,
         minHeight:100,
     });
+
+    window.customComponents = [[${allFlow}]];
 
     init();
     /*]]>*/

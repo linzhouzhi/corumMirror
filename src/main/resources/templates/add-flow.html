@@ -8,14 +8,14 @@
       <div class="palette palette-content" id="paletteDiv"></div>
       <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteComponent">API</div>
       <div id="paletteComponent" class="palette palette-content" style="background-color: #d9f4fa;"></div>
-      <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteUserConstom">CONSTOM</div>
-      <div id="paletteUserConstom" class="palette palette-content" style="background-color: #d9f4fa;"></div>
+      <div class="palette palette-title glyphicon glyphicon glyphicon-menu-down" data-target="paletteUserCustom">CUSTOM</div>
+      <div id="paletteUserCustom" class="palette palette-content" style="background-color: #d9f4fa;"></div>
     </div>
 
     <div style="padding-left:100px;width:100%">
         <div class="flow-top" th:include="common/flow-top ::  flow_tool_top"></div>
       <div id="diagramDiv" style="min-height: 500px;max-height: 1000px"></div>
-        <pre id="flow-chart-result"></pre>
+        <pre id="flow-chart-result" class="drag"></pre>
     </div>
 </div>
 
@@ -36,7 +36,7 @@
     var style_height = "height:" + height + "px";
     $("#diagramDiv").attr("style", style_height);
 
-    window.customComponents = [{"group":"redis","items":["redis-e4","redis-e11"]},{"group":"hbase","items":["hbase:e4","hbase:e11"]}];
+    window.customComponents = [[${allFlow}]];
     /*]]>*/
 </script>
 

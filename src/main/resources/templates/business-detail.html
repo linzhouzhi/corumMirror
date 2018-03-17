@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+<META HTTP-EQUIV="Cache-Control" CONTENT= "no-cache, must-revalidate" />
 <head th:replace="common/flow-header" />
 <body>
 <div class="container-fluid" style="padding-left: 0px;padding-right: 0px">
     <div class="flow-top" th:include="common/flow-top ::  flow_tool_top"></div>
     <div id="diagramDiv" style="min-height: 500px;max-height: 1000px"></div>
-    <pre id="flow-chart-result"></pre>
+    <pre id="flow-chart-result" class="drag"></pre>
 
 </div>
 <div id="paletteDiv" class="hidden"></div>
 <div id="paletteComponent" class="hidden"></div>
 <div id="paletteUserConstom" class="hidden"></div>
-
+<div id="paletteUserCustom" class="hidden"></div>
 <div th:include="common/flow-modal ::  flow_modal"></div>
 
 
@@ -30,7 +32,7 @@
     var style_height = "height:" + height + "px";
     $("#diagramDiv").attr("style", style_height);
 
-    window.customComponents = [];
+    window.customComponents = [[${allFlow}]];
     /*]]>*/
 </script>
 

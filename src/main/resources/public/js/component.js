@@ -6,7 +6,6 @@ function initComponent(diagram) {
     diagram.addDiagramListener("ExternalObjectsDropped", function (e) {
         try {
             e.subject.each(function(part) {
-                console.log(part);
                 var text = part.Vd.text;
                 if( text == "Redis" ) {
                     part.Vd.text = "function f1(param){ \n"+

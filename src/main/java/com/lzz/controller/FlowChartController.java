@@ -1,6 +1,7 @@
 package com.lzz.controller;
 
 import com.lzz.logic.FlowChartLogic;
+import com.lzz.logic.FrameLogic;
 import com.lzz.model.Response;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lzz on 2018/2/19.
@@ -20,12 +24,8 @@ import javax.annotation.Resource;
 public class FlowChartController {
     @Resource
     FlowChartLogic logic;
-
-    @RequestMapping("/add-flow")
-    public String addFlow(Model model, @RequestParam(defaultValue = "") String business) {
-        model.addAttribute("business", null);
-        return "add-flow";
-    }
+    @Resource
+    FrameLogic frameLogic;
 
     @RequestMapping("/flow-view")
     public String flowView(Model model, @RequestParam String group, @RequestParam String flow_name) {
@@ -33,7 +33,25 @@ public class FlowChartController {
         model.addAttribute("flow_data", response);
         model.addAttribute("group", group);
         model.addAttribute("business", flow_name);
+        model.addAttribute("allFlow", flowAllMap());
         return "flow-view";
+    }
+
+    @RequestMapping("/add-flow")
+    public String addFlow(Model model, @RequestParam(defaultValue = "") String business) {
+        model.addAttribute("allFlow", flowAllMap());
+        model.addAttribute("business", null);
+        return "add-flow";
+    }
+
+    public Map<String, List<String>> flowAllMap(){
+        Map<String, List<String>> allMap = new HashMap<>();
+        List<String> flows = frameLogic.getBusinessList();
+        for( String flow : flows ){
+            Response response = logic.getBusinessList( flow );
+            allMap.put( flow, (List<String>) response.getRes());
+        }
+        return allMap;
     }
 
     @RequestMapping("/business-list")
@@ -60,6 +78,7 @@ public class FlowChartController {
         model.addAttribute("business", response);
         model.addAttribute("businessGroup", group);
         model.addAttribute("businessName", name);
+        model.addAttribute("allFlow", flowAllMap());
         return "business-detail";
     }
 
